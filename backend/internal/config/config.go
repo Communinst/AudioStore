@@ -41,6 +41,12 @@ type Config struct {
 		Password string `env:"POSTGRES_PASSWORD" env-required:"true"`
 		SSLMode  string `env:"POSTGRES_SSL" env-default:"disable"`
 	}
+	Redis struct {
+		Host     string `env:"REDIS_HOST" env-default:"localhost"`
+		Port     string `env:"REDIS_PORT" env-default:"6379"`
+		Password string `env:"REDIS_PASSWORD" env-required:"true"`
+		DBName   int    `env:"REDIS_DB" env-default:"0"`
+	}
 }
 
 func (cfg *Config) Show() {

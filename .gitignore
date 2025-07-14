@@ -6,7 +6,7 @@
 .DS_Store
 .idea/
 .vscode/
-.env
+*.env
 # Go modules cache
 **/go.mod.d/
 **/go.sum.d/

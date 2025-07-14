@@ -1,7 +1,7 @@
 package main
 
 import (
-	"AudioShare/backend/adapter"
+	"AudioShare/backend/internal/adapter"
 	"AudioShare/backend/internal/config"
 	"log/slog"
 	"os"
@@ -22,13 +22,20 @@ func main() {
 	cfg := config.LoadConfig(os.Getenv("CONFIG_PATH"))
 	cfg.Show()
 
-	postgreSQL := adapter.NewPostgres(cfg.Postgres.Host,
+	postgreSQL, postgresCleanUp, err := adapter.NewPostgres(cfg.Postgres.Host,
 		cfg.Postgres.Port,
 		cfg.Postgres.Username,
 		cfg.Postgres.Password,
 		cfg.Postgres.DBName,
 		cfg.Postgres.SSLMode)
+	redis, redisCleanUp, err := adapter.NewRedis(cfg.Redis.Host,
+		cfg.Redis.Port,
+		cfg.Redis.Password,
+		cfg.Redis.DBName)
 
-	postgreSQL.Db.DriverName()
+	postgreSQL.DB.DriverName()
+
+	defer postgresCleanUp()
+	defer redisCleanUp()
 
 }

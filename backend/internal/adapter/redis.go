@@ -13,14 +13,15 @@ type Redis struct {
 	DB *redis.Client
 }
 
-func NewRedis(address,
+func NewRedis(host,
+	port,
 	password string,
 	db int) (*Redis, func(), error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
 	conn := redis.NewClient(&redis.Options{
-		Addr:     address,
+		Addr:     fmt.Sprintf("%s:%s", host, port),
 		Password: password,
 		DB:       db})
 
