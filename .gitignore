@@ -7,7 +7,7 @@
 .idea/
 .vscode/
 .env
-*.env
+**/*.env
 # Go modules cache
 **/go.mod.d/
 **/go.sum.d/
