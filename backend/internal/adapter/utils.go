@@ -1,9 +1,6 @@
 package adapter
 
 import (
-	"AudioShare/backend/internal/adapter/minio"
-	"AudioShare/backend/internal/adapter/postgres"
-	"AudioShare/backend/internal/adapter/redis"
 	"log"
 )
 

@@ -23,5 +23,5 @@ type UserRepositoryInterface interface {
 }
 
 type Repository interface {
-	UserRepository
+	UserRepositoryInterface
 }
