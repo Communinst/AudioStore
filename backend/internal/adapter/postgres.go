@@ -1,4 +1,4 @@
-package postgres
+package adapter
 
 import (
 	"context"
@@ -11,7 +11,6 @@ import (
 )
 
 //TODO
-// Finish Minio conn. Test it.
 
 // Repos initiation
 // Service peeked

@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"AudioShare/backend/internal/entity"

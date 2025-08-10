@@ -1,6 +1,11 @@
 package adapter
 
-import "log"
+import (
+	"AudioShare/backend/internal/adapter/minio"
+	"AudioShare/backend/internal/adapter/postgres"
+	"AudioShare/backend/internal/adapter/redis"
+	"log"
+)
 
 type Closer interface {
 	Close() error
