@@ -3,7 +3,7 @@ services:
 
   postgres:
     image: "postgres:17.5-alpine"
-    container_name: AudioShare
+    container_name: ASPostgres
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_NAME}
@@ -13,9 +13,45 @@ services:
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT_INNER}" 
     healthcheck:
-      interval: 15s
-      timeout: 5s
+      test: [ "CMD-SHELL", "pg_isready", "-d", "books_db" ]
+      interval: 10s
+      timeout: 7s
       retries: 5
     restart: unless-stopped   
+    networks:
+      - AudioShare
 
+  redis:
+    image: "redis:7-alpine"
+    container_name: ASRedis
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=${REDIS_DB}
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT_INNER}" 
+    volumes:
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 7s
+      retries: 5
+    restart: unless-stopped   
+    networks:
+      - AudioShare
 
+  minio:
+    image: minio/minio
+    container_name: ASObjectMinio
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
+    ports: 
+      - "${MINIO_PORT}:${MINIO_PORT}" 
+      - "${MINIO_CONSOLE}:${MINIO_CONSOLE}" 
+    restart: unless-stopped   
+    networks:
+      - AudioShare
+networks:
+  AudioShare:
+    driver: bridge     

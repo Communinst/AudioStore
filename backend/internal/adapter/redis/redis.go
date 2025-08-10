@@ -1,4 +1,4 @@
-package adapter
+package redis
 
 import (
 	"context"
@@ -10,13 +10,14 @@ import (
 )
 
 type Redis struct {
-	DB *redis.Client
+	db *redis.Client
 }
 
 func NewRedis(host,
 	port,
 	password string,
-	db int) (*Redis, func(), error) {
+	db int) (*Redis, error) {
+
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
@@ -25,18 +26,17 @@ func NewRedis(host,
 		Password: password,
 		DB:       db})
 
-	err := conn.Ping(ctx)
+	err := conn.Ping(ctx).Err()
 	if err != nil {
-		return nil, nil, fmt.Errorf("redis: connection failed: %w", err.Err())
+		return nil, fmt.Errorf("redis: connection failed: %w", err)
 	}
-
-	return &Redis{DB: conn}, func() {
-		if err := conn.Close(); err != nil {
-			slog.Error("redis: failed to shutdown redis connection.", "Error:", err)
-		}
-	}, nil
+	slog.Info("redis: connection established.")
+	return &Redis{db: conn}, nil
 }
 
 func (r *Redis) Close() error {
-	return r.DB.Close()
+	if err := r.db.Close(); err != nil {
+		return fmt.Errorf("redis: failed to shutdown postgres connection: %w", err)
+	}
+	return nil
 }
