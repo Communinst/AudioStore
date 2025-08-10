@@ -8,7 +8,7 @@ type Closer interface {
 	Close() error
 }
 
-func MustConnect[Connection *Postgres | *Redis | *Minio](conn Connection, err error) Connection {
+func MustConnect[Connection *postgres.Postgres | *redis.Redis | *minio.Minio](conn Connection, err error) Connection {
 	if err != nil {
 		log.Fatal(err)
 	}
