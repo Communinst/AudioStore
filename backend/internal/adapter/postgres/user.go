@@ -23,9 +23,7 @@ func (u *UserRepository) PostOne(ctx context.Context, data *entity.User) (int, e
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO `
 
-	return id, tx.Commit()
 }
 
 // GetOneById(ctx context.Context, id int) (*E, error)

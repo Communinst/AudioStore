@@ -20,3 +20,23 @@ CREATE TABLE dumps (
     filename VARCHAR(255) NOT NULL,
     size BIGINT NOT NULL
 );
+
+
+CREATE OR REPLACE FUNCTION post_user(
+    p_login VARCHAR(63),
+    p_email VARCHAR(127),
+    p_password VARCHAR(63),
+    p_nickname VARCHAR(63),
+    p_registered TIMESTAMP,
+    p_role_id INT
+) RETURNS INT AS $$
+DECLARE
+    new_user_id INT;
+BEGIN
+    INSERT INTO users
+    VALUES (p_login, p_email, p_password, p_nickname, p_registered, p_role_id)
+    RETURNING id INTO new_user_id;
+
+    RETURN new_user_id;
+END;
+$$ LANGUAGE plpgsql;
