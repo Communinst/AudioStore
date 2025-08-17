@@ -1,14 +1,14 @@
-package error
+package httpError
 
 type HTTPError struct {
 	HTTPStatus int
 	Msg        string
 }
 
-func New(status int, err *error) error {
+func New(status int, msg string) error {
 	return &HTTPError{
 		HTTPStatus: status,
-		Msg:        (*err).Error(),
+		Msg:        msg,
 	}
 }
 

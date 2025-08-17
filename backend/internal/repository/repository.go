@@ -10,18 +10,20 @@ type Entity interface {
 }
 
 type EntityRepository[E Entity] interface {
-	PostOne(ctx context.Context, data *E) (int, error)
-	GetOneById(ctx context.Context, id int) (*E, error)
-	GetManyById(ctx context.Context, id []int) ([]*E, error)
-	DeleteOneById(ctx context.Context, id int) error
-	DeleteManyById(ctx context.Context, id []int) error
+	PostOne(ctx context.Context, data *E) (int64, error)
+	GetOneById(ctx context.Context, id uint64) (*E, error)
+	GetManyById(ctx context.Context, ids []uint64) ([]*E, error)
+	GetAll(ctx context.Context) ([]*E, error)
+	DeleteOneById(ctx context.Context, id uint64) error
+	DeleteManyById(ctx context.Context, ids []uint64) (uint64, error)
+	//UpdateDataById(ctx context.Context, id uint64, data *E) (int64, error)
 }
 
 type UserRepositoryInterface interface {
 	EntityRepository[entity.User]
-	UpdateRoleById(ctx context.Context, userId int, roleId int) (int, error)
 }
 
 type Repository interface {
 	UserRepositoryInterface
 }
+
