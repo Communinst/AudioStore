@@ -16,7 +16,6 @@ type EntityRepository[E Entity] interface {
 	GetAll(ctx context.Context) ([]*E, error)
 	DeleteOneById(ctx context.Context, id uint64) error
 	DeleteManyById(ctx context.Context, ids []uint64) (uint64, error)
-	//UpdateDataById(ctx context.Context, id uint64, data *E) (int64, error)
 }
 
 type UserRepositoryInterface interface {
