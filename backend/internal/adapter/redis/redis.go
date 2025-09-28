@@ -1,4 +1,4 @@
-package redis
+package redisAdapter
 
 import (
 	"context"
@@ -9,14 +9,14 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type Redis struct {
+type RedisClient struct {
 	db *redis.Client
 }
 
 func NewRedis(host,
 	port,
 	password string,
-	db int) (*Redis, error) {
+	db int) (*RedisClient, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -31,10 +31,10 @@ func NewRedis(host,
 		return nil, fmt.Errorf("redis: connection failed: %w", err)
 	}
 	slog.Info("redis: connection established.")
-	return &Redis{db: conn}, nil
+	return &RedisClient{db: conn}, nil
 }
 
-func (r *Redis) Close() error {
+func (r *RedisClient) Close() error {
 	if err := r.db.Close(); err != nil {
 		return fmt.Errorf("redis: failed to shutdown postgres connection: %w", err)
 	}

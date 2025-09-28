@@ -1,4 +1,4 @@
-package postgres
+package postgresAdapter
 
 import (
 	"context"
@@ -10,12 +10,16 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	user_table = "users"
+)
+
 //TODO
 
 // Repos initiation
 // Service peeked
 
-type Postgres struct {
+type PostgresClient struct {
 	db *sqlx.DB
 }
 
@@ -24,7 +28,7 @@ func NewPostgres(host,
 	username,
 	password,
 	dbName,
-	sslMode string) (*Postgres, error) {
+	sslMode string) (*PostgresClient, error) {
 	connString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		host,
 		port,
@@ -42,10 +46,10 @@ func NewPostgres(host,
 	}
 
 	slog.Info("postgres: connection established.")
-	return &Postgres{db: conn}, nil
+	return &PostgresClient{db: conn}, nil
 }
 
-func (p *Postgres) Close() error {
+func (p *PostgresClient) Close() error {
 	if err := p.db.Close(); err != nil {
 		return fmt.Errorf("postgres: failed to shutdown postgres connection: %w", err)
 	}

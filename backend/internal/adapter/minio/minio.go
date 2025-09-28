@@ -1,4 +1,4 @@
-package minio
+package minioAdapter
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-type Minio struct {
+type MinioClient struct {
 	db *minio.Client
 }
 
@@ -20,7 +20,7 @@ func NewMinio(host,
 	access,
 	secret,
 	bucket string,
-	SSL bool) (*Minio, error) {
+	SSL bool) (*MinioClient, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -39,5 +39,5 @@ func NewMinio(host,
 		return nil, fmt.Errorf("minio: bucket creation failed: %w", err)
 	}
 
-	return &Minio{db: conn}, nil
+	return &MinioClient{db: conn}, nil
 }
