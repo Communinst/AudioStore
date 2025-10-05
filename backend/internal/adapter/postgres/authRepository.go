@@ -54,20 +54,22 @@ func (this *AuthPostgresRepository) PostOne(ctx context.Context, data *entity.Us
 }
 
 func (this *AuthPostgresRepository) GetOneByEmail(ctx context.Context, email string) (*entity.User, error) {
-	var resultData *entity.User
-	query := `SELECT * FROM` + user_table + `WHERE email = $2`
-	err := this.db.GetContext(ctx, &resultData, query, user_table, email)
+	var resultData entity.User
+	query := `SELECT * FROM ` + user_table + ` WHERE email = $1`
+	err := this.db.GetContext(ctx, &resultData, query, email)
 	if err == nil {
 		slog.Info("auth postgres repository: get one: by email: obtained successfully.")
-		return resultData, nil
+		return &resultData, nil
 	}
 	if errors.Is(err, sql.ErrNoRows) {
 		slog.Warn("auth postgres repository: get one: by email: no user by email: %s",
 			slog.String("email", email),
 			slog.String("table", user_table))
+		return nil, nil
 	}
 
 	slog.Error(fmt.Sprintf("auth postgres repository: get one: by email: failed to obtain: %s", err.Error()))
 	return nil, httpError.New(http.StatusInternalServerError,
 		fmt.Sprintf("auth postgres repository: get one: by email: failed to obtain: %s", err.Error()))
 }
+

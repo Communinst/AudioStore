@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log/slog"
 	"time"
 
@@ -54,9 +53,9 @@ type Config struct {
 	}
 }
 
-func (cfg *Config) Show() {
-	fmt.Printf("%+v\n", *cfg)
-}
+// func (cfg *Config) Show() {
+// 	fmt.Printf("%+v\n", *cfg)
+// }
 
 func LoadConfig(cfg_name string) *Config {
 	var cfg Config

@@ -56,15 +56,16 @@ func (u *UserPostgresRepository) PostOne(ctx context.Context, data *entity.User)
 
 func (u *UserPostgresRepository) GetOneById(ctx context.Context, id uint64) (*entity.User, error) {
 
-	var resultData *entity.User
+	var resultData entity.User
 	query := `SELECT * FROM get_user_by_id($1)`
 	err := u.db.GetContext(ctx, &resultData, query, id)
 	if err == nil {
 		slog.Info("user postgres repository: get one: by id: obtained successfully.")
-		return resultData, nil
+		return &resultData, nil
 	}
 	if errors.Is(err, sql.ErrNoRows) {
 		slog.Error("user postgres repository: get one: by id: no user by id: ", slog.Uint64("user_id", id))
+		return nil, nil
 	}
 
 	slog.Error(fmt.Sprintf("user postgres repository: get one: by id: failed to obtain: %s", err.Error()))
@@ -113,4 +114,14 @@ func (u *UserPostgresRepository) DeleteOneById(ctx context.Context, id uint64) e
 	}
 
 	return tx.Commit()
+}
+
+func (u *UserPostgresRepository) CheckIfUserWithRoleExists(ctx context.Context, roleId uint8) (bool, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM ` + user_table + ` WHERE role_id = $1`
+	err := u.db.GetContext(ctx, &count, query, roleId)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }

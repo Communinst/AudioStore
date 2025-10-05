@@ -1,10 +1,14 @@
 package handler
 
-import "AudioShare/backend/internal/service"
+import (
+	"AudioShare/backend/internal/service"
+
+	"github.com/gin-gonic/gin"
+)
 
 type AuthorizationHandlerInterface interface {
-	SignIn()
-	SignUp()
+	SignUp(c *gin.Context)
+	SignIn(c *gin.Context)
 }
 
 type Handler struct {
@@ -12,5 +16,5 @@ type Handler struct {
 }
 
 func NewHandler(srvc *service.Service) *Handler {
-
+	return nil
 }

@@ -13,6 +13,7 @@ const (
 type AuthServiceInteface interface {
 	PostOne(ctx context.Context, data *entity.User) (int64, error)
 	GetOneByEmail(ctx context.Context, email string) (*entity.User, error)
+	GenerateAuthToken(user *entity.User, secret string, expireTime int) (string, error)
 }
 
 type EntityService[E repository.Entity] interface {
@@ -33,6 +34,6 @@ func NewService(
 	redis *repository.RedisRepository,
 	minio *repository.MinioRepository) *Service {
 	return &Service{
-		AuthServiceInteface: NewAuthService(postgres.AuthPostgresRepositoryInterface),
+		//AuthServiceInteface: NewAuthService(postgres.AuthPostgresRepositoryInterface),
 	}
 }
