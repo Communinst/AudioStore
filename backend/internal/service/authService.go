@@ -3,7 +3,7 @@ package service
 import (
 	authToken "AudioShare/backend/internal/JSONWebTokens"
 	"AudioShare/backend/internal/entity"
-	repository "AudioShare/backend/internal/repository/interfaces"
+	repositoryAggregated "AudioShare/backend/internal/repository/aggregatedRepo"
 	"context"
 	"log/slog"
 	"strconv"
@@ -13,10 +13,10 @@ import (
 )
 
 type AuthService struct {
-	postgres repository.AuthPostgresRepositoryInterface
+	postgres repositoryAggregated.AuthAggregatedRepositoryInterface
 }
 
-func NewAuthService(p repository.AuthPostgresRepositoryInterface) *AuthService {
+func NewAuthService(p repositoryAggregated.AuthAggregatedRepositoryInterface) *AuthService {
 	return &AuthService{
 		postgres: p,
 	}

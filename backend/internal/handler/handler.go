@@ -12,9 +12,14 @@ type AuthorizationHandlerInterface interface {
 }
 
 type UserHandlerInterface interface {
+	ObtainProfileById(c *gin.Engine)
+	ObtainAllUsers(c *gin.Engine)
+	RemoveUserById(c *gin.Engine)
 }
 
 type TrackHandlerInteface interface {
+	UploadTrack(c *gin.Context)
+	DownloadTrack(c *gin.Context)
 }
 
 type Handler struct {

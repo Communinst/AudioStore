@@ -1,4 +1,4 @@
-
+  
 services:
 
   postgres:
@@ -12,11 +12,11 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT_INNER}" 
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready", "-d", "books_db" ]
-      interval: 10s
-      timeout: 7s
-      retries: 5
+    # healthcheck:
+      # test: [ "CMD-SHELL", "pg_isready", "-d", "books_db" ]
+      # interval: 10s
+      # timeout: 7s
+      # retries: 5
     restart: unless-stopped   
     networks:
       - AudioShare
@@ -43,15 +43,21 @@ services:
   minio:
     image: minio/minio
     container_name: ASObjectMinio
+    command: server /data --console-address ":${MINIO_CONSOLE}"
     environment:
       - MINIO_ROOT_USER=${MINIO_ACCESS}
       - MINIO_ROOT_PASSWORD=${MINIO_SECRET}
     ports: 
       - "${MINIO_PORT}:${MINIO_PORT}" 
       - "${MINIO_CONSOLE}:${MINIO_CONSOLE}" 
+    volumes:
+      - minio_data:/data
     restart: unless-stopped   
     networks:
       - AudioShare
 networks:
   AudioShare:
     driver: bridge     
+
+volumes:
+  minio_data:

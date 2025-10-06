@@ -72,4 +72,3 @@ func (this *AuthPostgresRepository) GetOneByEmail(ctx context.Context, email str
 	return nil, httpError.New(http.StatusInternalServerError,
 		fmt.Sprintf("auth postgres repository: get one: by email: failed to obtain: %s", err.Error()))
 }
-

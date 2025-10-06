@@ -23,6 +23,7 @@ func NewAggregatedRepository(pstgrs repository.AuthPostgresRepositoryInterface,
 func (this *AuthAggregatedRepository) PostOne(ctx context.Context, data *entity.User) (int64, error) {
 	slog.Info("auth agg repository: post one: intitiated.")
 
+	slog.Info("auth agg repository: post one: check cache.")
 	result, err := this.cache.GetOneByEmail(ctx, data.Email)
 	if err != nil {
 		slog.Info(err.Error())
@@ -30,9 +31,13 @@ func (this *AuthAggregatedRepository) PostOne(ctx context.Context, data *entity.
 		return int64(result.Id), nil
 	}
 
-	
-
-	return 0, nil
+	slog.Info("auth agg repository: post one: request to db.")
+	resultId, err := this.db.PostOne(ctx, data)
+	if err == nil {
+		return resultId, err
+	}
+	slog.Error(err.Error())
+	return -1, err
 }
 
 // GetOneByEmail(ctx context.Context, email string) (*entity.User, error)
