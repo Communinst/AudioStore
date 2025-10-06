@@ -40,4 +40,31 @@ func (this *AuthAggregatedRepository) PostOne(ctx context.Context, data *entity.
 	return -1, err
 }
 
-// GetOneByEmail(ctx context.Context, email string) (*entity.User, error)
+func (this *AuthAggregatedRepository) GetOneByEmail(ctx context.Context, email string) (*entity.UserCache, error) {
+	slog.Info("auth agg repository: get one: by email: intitiated.")
+
+	slog.Info("auth agg repository: get one: by email: check cache.")
+	resultCache, err := this.cache.GetOneByEmail(ctx, email)
+	if err != nil {
+		slog.Info(err.Error())
+	} else if resultCache != nil {
+		return resultCache, nil
+	}
+
+	result, err := this.db.GetOneByEmail(ctx, email)
+	if err == nil {
+		if result != nil {
+			slog.Info("auth agg repository: get one: by email: succeded.")
+			return &entity.UserCache{
+				Id:       result.Id,
+				Email:    result.Email,
+				Nickname: result.Nickname,
+				RoleId:   result.RoleId,
+			}, nil
+		}
+		slog.Info("auth agg repository: get one: by email: no data found.")
+		return nil, nil
+	}
+	slog.Error("auth agg repository: get one: by email: failed.")
+	return nil, err
+}
