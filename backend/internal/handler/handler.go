@@ -12,9 +12,9 @@ type AuthorizationHandlerInterface interface {
 }
 
 type UserHandlerInterface interface {
-	ObtainProfileById(c *gin.Engine)
-	ObtainAllUsers(c *gin.Engine)
-	RemoveUserById(c *gin.Engine)
+	ObtainProfileById(c *gin.Context)
+	ObtainAllUsers(c *gin.Context)
+	RemoveUserById(c *gin.Context)
 }
 
 type TrackHandlerInterface interface {
@@ -24,13 +24,15 @@ type TrackHandlerInterface interface {
 }
 
 type Handler struct {
-	auth  AuthorizationHandlerInterface
-	user  UserHandlerInterface
-	track TrackHandlerInterface
+	Auth  AuthorizationHandlerInterface
+	User  UserHandlerInterface
+	Track TrackHandlerInterface
 }
 
 func NewHandler(srvc *service.Service) *Handler {
 	return &Handler{
-		auth: NewAuthHandler(srvc.AuthServiceInteface),
+		Auth:  NewAuthHandler(srvc.AuthServiceInterface),
+		User:  NewUserHandler(srvc.UserServiceInterface),
+		Track: NewTrackHandler(srvc.TrackServiceInterface),
 	}
 }

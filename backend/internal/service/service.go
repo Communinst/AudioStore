@@ -10,7 +10,7 @@ const (
 	auth_time_out = 15
 )
 
-type AuthServiceInteface interface {
+type AuthServiceInterface interface {
 	PostOne(ctx context.Context, data *entity.User) (int64, error)
 	GetOneByEmail(ctx context.Context, email string) (*entity.User, error)
 	GenerateAuthToken(user *entity.User, secret string, expireTime int) (string, error)
@@ -25,7 +25,7 @@ type EntityServiceInterface[E repository.Entity] interface {
 	DeleteManyById(ctx context.Context, ids []uint64) (uint64, error)
 }
 
-type UserServiceInreface interface {
+type UserServiceInterface interface {
 	EntityServiceInterface[entity.User]
 }
 
@@ -34,7 +34,9 @@ type TrackServiceInterface interface {
 }
 
 type Service struct {
-	AuthServiceInteface
+	AuthServiceInterface
+	UserServiceInterface
+	TrackServiceInterface
 }
 
 func NewService(

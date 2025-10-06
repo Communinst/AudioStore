@@ -21,10 +21,10 @@ const (
 )
 
 type AuthHandler struct {
-	auth service.AuthServiceInteface
+	auth service.AuthServiceInterface
 }
 
-func NewAuthHandler(srvc service.AuthServiceInteface) *AuthHandler {
+func NewAuthHandler(srvc service.AuthServiceInterface) *AuthHandler {
 	return &AuthHandler{
 		auth: srvc,
 	}

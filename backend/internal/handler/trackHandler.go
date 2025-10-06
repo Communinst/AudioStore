@@ -8,9 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// TrackHandler реализует обработку треков: загрузка, скачивание, получение метаинформации
-
-// TrackHandler содержит зависимость на сервис треков
 type TrackHandler struct {
 	service service.TrackServiceInterface
 }
@@ -19,7 +16,6 @@ func NewTrackHandler(srv service.TrackServiceInterface) *TrackHandler {
 	return &TrackHandler{service: srv}
 }
 
-// UploadTrack — загрузка трека пользователем
 func (h *TrackHandler) UploadTrack(c *gin.Context) {
 	userIDVal, exists := c.Get("userID")
 	if !exists {
@@ -68,7 +64,6 @@ func (h *TrackHandler) UploadTrack(c *gin.Context) {
 	c.JSON(http.StatusOK, track)
 }
 
-// DownloadTrack — скачивание трека по ссылке
 func (h *TrackHandler) DownloadTrack(c *gin.Context) {
 	bucket := c.Query("bucket")
 	objectKey := c.Query("objectKey")
@@ -87,7 +82,6 @@ func (h *TrackHandler) DownloadTrack(c *gin.Context) {
 	c.Data(http.StatusOK, resp.ContentType, resp.FileData)
 }
 
-// GetTrackInfo — получение метаинформации о треке
 func (h *TrackHandler) GetTrackInfo(c *gin.Context) {
 	bucket := c.Query("bucket")
 	objectKey := c.Query("objectKey")
