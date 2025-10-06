@@ -2,6 +2,7 @@ package service
 
 import (
 	"AudioShare/backend/internal/entity"
+	repositoryAggregated "AudioShare/backend/internal/repository/aggregatedRepo"
 	repository "AudioShare/backend/internal/repository/interfaces"
 	"context"
 )
@@ -12,21 +13,26 @@ const (
 
 type AuthServiceInterface interface {
 	PostOne(ctx context.Context, data *entity.User) (int64, error)
-	GetOneByEmail(ctx context.Context, email string) (*entity.User, error)
+	GetOneByEmail(ctx context.Context, email string) (*entity.UserCache, error)
 	GenerateAuthToken(user *entity.User, secret string, expireTime int) (string, error)
+	GetOneByEmailFull(ctx context.Context, email string) (*entity.User, error)
+}
+
+type DumpServiceInterface interface {
+	InsertDump(ctx context.Context, filePath string, size int64) error
+	GetAllDumps(ctx context.Context) ([]entity.Dump, error)
 }
 
 type EntityServiceInterface[E repository.Entity] interface {
 	PostOne(ctx context.Context, data *E) (int64, error)
 	GetOneById(ctx context.Context, id uint64) (*E, error)
-	GetManyById(ctx context.Context, ids []uint64) ([]*E, error)
 	GetAll(ctx context.Context) ([]*E, error)
 	DeleteOneById(ctx context.Context, id uint64) error
-	DeleteManyById(ctx context.Context, ids []uint64) (uint64, error)
 }
 
 type UserServiceInterface interface {
 	EntityServiceInterface[entity.User]
+	CheckIfUserWithRoleExists(ctx context.Context, roleId uint8) (bool, error)
 }
 
 type TrackServiceInterface interface {
@@ -39,11 +45,10 @@ type Service struct {
 	TrackServiceInterface
 }
 
-func NewService(
-	postgres *repository.PostgresRepository,
-	redis *repository.RedisRepository,
-	minio *repository.MinioRepository) *Service {
+func NewService(repo *repositoryAggregated.AggregatedRepository) *Service {
 	return &Service{
-		//AuthServiceInteface: NewAuthService(postgres.AuthPostgresRepositoryInterface),
+		Auth: NewAuthService(repo.Auth),
+		Dump: NewDumpService(repo.Dump),
+		User: NewUserService(repo.User),
 	}
 }

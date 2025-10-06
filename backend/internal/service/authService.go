@@ -13,12 +13,12 @@ import (
 )
 
 type AuthService struct {
-	postgres repositoryAggregated.AuthAggregatedRepositoryInterface
+	repo repositoryAggregated.AuthAggregatedRepositoryInterface
 }
 
 func NewAuthService(p repositoryAggregated.AuthAggregatedRepositoryInterface) *AuthService {
 	return &AuthService{
-		postgres: p,
+		repo: p,
 	}
 }
 
@@ -28,19 +28,19 @@ func (this *AuthService) PostOne(ctx context.Context, data *entity.User) (int64,
 	ctx, cancel := context.WithTimeout(ctx, auth_time_out*time.Second)
 	defer cancel()
 
-	result, err := this.postgres.PostOne(ctx, data)
+	result, err := this.repo.PostOne(ctx, data)
 	slog.Info("auth service: sign up: finished")
 
 	return result, err
 }
 
-func (this *AuthService) GetOneByEmail(ctx context.Context, email string) (*entity.User, error) {
+func (this *AuthService) GetOneByEmail(ctx context.Context, email string) (*entity.UserCache, error) {
 	slog.Info("auth service: sign in: by email: initiated")
 
 	ctx, cancel := context.WithTimeout(ctx, auth_time_out*time.Second)
 	defer cancel()
 
-	result, err := this.postgres.GetOneByEmail(ctx, email)
+	result, err := this.repo.GetOneByEmail(ctx, email)
 	slog.Info("auth service: sign in: by email: finished")
 
 	return result, err
@@ -62,4 +62,16 @@ func (this *AuthService) GenerateAuthToken(user *entity.User, secret string, exp
 		return "", err
 	}
 	return result, nil
+}
+
+func (this *AuthService) GetOneByEmailFull(ctx context.Context, email string) (*entity.User, error) {
+	slog.Info("auth service: sign in: by email: initiated")
+
+	ctx, cancel := context.WithTimeout(ctx, auth_time_out*time.Second)
+	defer cancel()
+
+	result, err := this.repo.GetOneByEmailFull(ctx, email)
+	slog.Info("auth service: sign in: by email: finished")
+
+	return result, err
 }

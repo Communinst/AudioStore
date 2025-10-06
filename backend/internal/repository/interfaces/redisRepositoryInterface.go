@@ -1,6 +1,7 @@
 package repository
 
 import (
+	redisAdapter "AudioShare/backend/internal/adapter/redis"
 	"AudioShare/backend/internal/entity"
 	"context"
 	"time"
@@ -26,11 +27,19 @@ type EntityRedisRepositoryInterface[E Entity] interface {
 
 type UserRedisRepositoryInterface interface {
 	EntityRedisRepositoryInterface[entity.UserCache]
-	PostOneById(ctx context.Context, id uint64, data *entity.UserCache, expiration time.Duration) error
+	PostOneById(ctx context.Context, data *entity.UserCache, expiration time.Duration) error
 	GetOneById(ctx context.Context, id uint64) (*entity.UserCache, error)
 	DeleteOneById(ctx context.Context, id uint64) error
 }
 
 type RedisRepository struct {
-	UserRedisRepositoryInterface
+	Auth AuthRedisRepositoryInterface
+	User UserRedisRepositoryInterface
+}
+
+func NewRedisRepository(dbWrapper *redisAdapter.RedisClient) *RedisRepository {
+	return &RedisRepository{
+		Auth: redisAdapter.NewAuthRedisRepository(dbWrapper),
+		User: redisAdapter.NewUserRedisRepository(dbWrapper),
+	}
 }

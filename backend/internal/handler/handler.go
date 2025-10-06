@@ -11,6 +11,10 @@ type AuthorizationHandlerInterface interface {
 	SignIn(c *gin.Context)
 }
 
+type DumpHandlerInterface interface {
+	CreateDump(c *gin.Context)
+}
+
 type UserHandlerInterface interface {
 	ObtainProfileById(c *gin.Context)
 	ObtainAllUsers(c *gin.Context)
