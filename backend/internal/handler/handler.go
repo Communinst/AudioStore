@@ -11,10 +11,20 @@ type AuthorizationHandlerInterface interface {
 	SignIn(c *gin.Context)
 }
 
+type UserHandlerInterface interface {
+}
+
+type TrackHandlerInteface interface {
+}
+
 type Handler struct {
-	authorization AuthorizationHandlerInterface
+	auth  AuthorizationHandlerInterface
+	user  UserHandlerInterface
+	track TrackHandlerInteface
 }
 
 func NewHandler(srvc *service.Service) *Handler {
-	return nil
+	return &Handler{
+		auth: NewAuthHandler(srvc.AuthServiceInteface),
+	}
 }

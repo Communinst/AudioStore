@@ -1,6 +1,7 @@
 package service
 
 import (
+	authToken "AudioShare/backend/internal/JSONWebTokens"
 	"AudioShare/backend/internal/entity"
 	repository "AudioShare/backend/internal/repository/interfaces"
 	"context"
@@ -48,7 +49,7 @@ func (this *AuthService) GetOneByEmail(ctx context.Context, email string) (*enti
 func (this *AuthService) GenerateAuthToken(user *entity.User, secret string, expireTime int) (string, error) {
 	claims := &authToken.JWTToken{
 		Email: user.Email,
-		Id:    strconv.Itoa(user.UserId),
+		Id:    strconv.FormatUint(user.Id, 10),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(expireTime))),
 			Issuer:    "CWDB6Sem",

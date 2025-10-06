@@ -16,13 +16,21 @@ type AuthServiceInteface interface {
 	GenerateAuthToken(user *entity.User, secret string, expireTime int) (string, error)
 }
 
-type EntityService[E repository.Entity] interface {
+type EntityServiceInterface[E repository.Entity] interface {
 	PostOne(ctx context.Context, data *E) (int64, error)
 	GetOneById(ctx context.Context, id uint64) (*E, error)
 	GetManyById(ctx context.Context, ids []uint64) ([]*E, error)
 	GetAll(ctx context.Context) ([]*E, error)
 	DeleteOneById(ctx context.Context, id uint64) error
 	DeleteManyById(ctx context.Context, ids []uint64) (uint64, error)
+}
+
+type UserServiceInreface interface {
+	EntityServiceInterface[entity.User]
+}
+
+type TrackServiceInterface interface {
+	EntityServiceInterface[entity.TrackFile]
 }
 
 type Service struct {

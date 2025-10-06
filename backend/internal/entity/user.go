@@ -12,6 +12,13 @@ type User struct {
 	RoleId     uint8     `json:"role_id" db:"role_id"`
 }
 
+type UserCache struct {
+	Id       uint64 `json:"id" db:"id"`
+	Email    string `json:"email" db:"email"`
+	Nickname string `json:"nickname" db:"nickname"`
+	RoleId   uint8  `json:"role_id" db:"role_id"`
+}
+
 func (u *User) Update(fresh *User) {
 	if fresh.Email != "" {
 		u.Email = fresh.Email

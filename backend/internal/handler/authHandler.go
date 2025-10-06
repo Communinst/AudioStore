@@ -4,7 +4,6 @@ import (
 	"AudioShare/backend/internal/entity"
 	"AudioShare/backend/internal/service"
 	"AudioShare/backend/internal/validation"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -95,7 +94,7 @@ func (this *AuthHandler) SignIn(c *gin.Context) {
 
 	// Verify the password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
-		fmt.Printf("%s\n", err.Error())
+
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
@@ -106,9 +105,9 @@ func (this *AuthHandler) SignIn(c *gin.Context) {
 		log.Fatal("ACCESS_TOKEN_SECRET environment variable not set")
 	}
 	expiry, err := strconv.ParseInt(os.Getenv("AUTHORIZATION_EXPIRE_TIME"), 10, 64) //TODO: move from here
+
 	if err != nil {
-		slog.Info("auth handler: sign in: failed to parse .env expiration time. Default time was assigned.")
-		expiry = default_expiration_time
+		log.Fatal("AUTHORIZATION_EXPIRE_TIME environment variable parse failed")
 	}
 	if expiry == 0 {
 		log.Fatal("AUTHORIZATION_EXPIRE_TIME environment variable not set")
@@ -122,7 +121,6 @@ func (this *AuthHandler) SignIn(c *gin.Context) {
 	// Replace env dependecy with request to cache
 	// in order to refine feedback on roles
 	defaultAdmin, _ := strconv.ParseInt(os.Getenv("DEFAULT_ADMIN_ROLE_ID"), 10, 64)
-	fmt.Printf("%s\n", userToken)
 	if user.RoleId == uint8(defaultAdmin) {
 		//c.Redirect(http.StatusOK, "/admin")
 		c.JSON(http.StatusOK, gin.H{"token": userToken, "role": "admin", "userId": user.Id})
