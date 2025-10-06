@@ -21,10 +21,10 @@ const (
 )
 
 type AuthHandler struct {
-	auth service.AuthServiceInteface
+	auth service.AuthServiceInterface
 }
 
-func NewAuthHandler(srvc service.AuthServiceInteface) *AuthHandler {
+func NewAuthHandler(srvc service.AuthServiceInterface) *AuthHandler {
 	return &AuthHandler{
 		auth: srvc,
 	}
@@ -86,7 +86,7 @@ func (this *AuthHandler) SignIn(c *gin.Context) {
 	}
 
 	// Retrieve the user by email
-	user, err := this.auth.GetOneByEmail(c.Request.Context(), creds.Email)
+	user, err := this.auth.GetOneByEmailFull(c.Request.Context(), creds.Email)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return

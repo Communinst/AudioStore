@@ -63,3 +63,15 @@ func (this *AuthService) GenerateAuthToken(user *entity.User, secret string, exp
 	}
 	return result, nil
 }
+
+func (this *AuthService) GetOneByEmailFull(ctx context.Context, email string) (*entity.User, error) {
+	slog.Info("auth service: sign in: by email: initiated")
+
+	ctx, cancel := context.WithTimeout(ctx, auth_time_out*time.Second)
+	defer cancel()
+
+	result, err := this.repo.GetOneByEmailFull(ctx, email)
+	slog.Info("auth service: sign in: by email: finished")
+
+	return result, err
+}

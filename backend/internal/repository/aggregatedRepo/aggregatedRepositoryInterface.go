@@ -9,6 +9,7 @@ import (
 type AuthAggregatedRepositoryInterface interface {
 	PostOne(ctx context.Context, data *entity.User) (int64, error)
 	GetOneByEmail(ctx context.Context, email string) (*entity.UserCache, error)
+	GetOneByEmailFull(ctx context.Context, email string) (*entity.User, error)
 }
 
 type DumpAggregatedRepositoryInterface interface {

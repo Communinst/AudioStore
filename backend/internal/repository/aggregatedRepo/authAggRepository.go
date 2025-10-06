@@ -68,3 +68,19 @@ func (this *AuthAggregatedRepository) GetOneByEmail(ctx context.Context, email s
 	slog.Error("auth agg repository: get one: by email: failed.")
 	return nil, err
 }
+
+func (this *AuthAggregatedRepository) GetOneByEmailFull(ctx context.Context, email string) (*entity.User, error) {
+	slog.Info("auth agg repository: get one: by email: intitiated.")
+
+	result, err := this.db.GetOneByEmail(ctx, email)
+	if err == nil {
+		if result != nil {
+			slog.Info("auth agg repository: get one: by email: succeded.")
+			return result, nil
+		}
+		slog.Info("auth agg repository: get one: by email: no data found.")
+		return nil, nil
+	}
+	slog.Error("auth agg repository: get one: by email: failed.")
+	return nil, err
+}

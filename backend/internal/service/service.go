@@ -15,6 +15,7 @@ type AuthServiceInterface interface {
 	PostOne(ctx context.Context, data *entity.User) (int64, error)
 	GetOneByEmail(ctx context.Context, email string) (*entity.UserCache, error)
 	GenerateAuthToken(user *entity.User, secret string, expireTime int) (string, error)
+	GetOneByEmailFull(ctx context.Context, email string) (*entity.User, error)
 }
 
 type DumpServiceInterface interface {
@@ -48,6 +49,6 @@ func NewService(repo *repositoryAggregated.AggregatedRepository) *Service {
 	return &Service{
 		Auth: NewAuthService(repo.Auth),
 		Dump: NewDumpService(repo.Dump),
-		//User: NewUserService(repo.User),
+		User: NewUserService(repo.User),
 	}
 }
