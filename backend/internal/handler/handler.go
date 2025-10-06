@@ -13,6 +13,8 @@ type AuthorizationHandlerInterface interface {
 
 type DumpHandlerInterface interface {
 	CreateDump(c *gin.Context)
+	RestoreDump(c *gin.Context)
+	GetAllDumps(c *gin.Context)
 }
 
 type UserHandlerInterface interface {
@@ -30,13 +32,15 @@ type TrackHandlerInterface interface {
 type Handler struct {
 	Auth  AuthorizationHandlerInterface
 	User  UserHandlerInterface
+	Dump  DumpHandlerInterface
 	Track TrackHandlerInterface
 }
 
 func NewHandler(srvc *service.Service) *Handler {
 	return &Handler{
-		Auth:  NewAuthHandler(srvc.AuthServiceInterface),
-		User:  NewUserHandler(srvc.UserServiceInterface),
-		Track: NewTrackHandler(srvc.TrackServiceInterface),
+		Auth:  NewAuthHandler(srvc.Auth),
+		User:  NewUserHandler(srvc.User),
+		Dump:  NewDumpHandler(srvc.Dump),
+		Track: NewTrackHandler(srvc.Track),
 	}
 }

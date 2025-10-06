@@ -9,14 +9,14 @@ import (
 )
 
 type TrackHandler struct {
-	service service.TrackServiceInterface
+	srvc service.TrackServiceInterface
 }
 
 func NewTrackHandler(srv service.TrackServiceInterface) *TrackHandler {
-	return &TrackHandler{service: srv}
+	return &TrackHandler{srvc: srv}
 }
 
-func (h *TrackHandler) UploadTrack(c *gin.Context) {
+func (this *TrackHandler) UploadTrack(c *gin.Context) {
 	userIDVal, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not authorized"})
@@ -55,7 +55,7 @@ func (h *TrackHandler) UploadTrack(c *gin.Context) {
 		OriginalName: file.Filename,
 	}
 
-	track, err := h.service.UploadTrack(c.Request.Context(), uploadReq)
+	track, err := this.srvc.UploadTrack(c.Request.Context(), uploadReq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -64,7 +64,7 @@ func (h *TrackHandler) UploadTrack(c *gin.Context) {
 	c.JSON(http.StatusOK, track)
 }
 
-func (h *TrackHandler) DownloadTrack(c *gin.Context) {
+func (this *TrackHandler) DownloadTrack(c *gin.Context) {
 	bucket := c.Query("bucket")
 	objectKey := c.Query("objectKey")
 	if bucket == "" || objectKey == "" {
@@ -72,7 +72,7 @@ func (h *TrackHandler) DownloadTrack(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.service.DownloadTrack(c.Request.Context(), bucket, objectKey)
+	resp, err := this.srvc.DownloadTrack(c.Request.Context(), bucket, objectKey) //define return type in service.go
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -82,7 +82,7 @@ func (h *TrackHandler) DownloadTrack(c *gin.Context) {
 	c.Data(http.StatusOK, resp.ContentType, resp.FileData)
 }
 
-func (h *TrackHandler) GetTrackInfo(c *gin.Context) {
+func (this *TrackHandler) GetTrackInfo(c *gin.Context) {
 	bucket := c.Query("bucket")
 	objectKey := c.Query("objectKey")
 	if bucket == "" || objectKey == "" {
@@ -90,7 +90,7 @@ func (h *TrackHandler) GetTrackInfo(c *gin.Context) {
 		return
 	}
 
-	trackInfo, err := h.service.GetTrackInfo(c.Request.Context(), bucket, objectKey)
+	trackInfo, err := this.srvc.GetTrackInfo(c.Request.Context(), bucket, objectKey)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

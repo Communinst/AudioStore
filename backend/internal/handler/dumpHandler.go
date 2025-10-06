@@ -64,7 +64,7 @@ func (this *DumpHandler) CreateDump(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Dump created successfully"})
 }
 
-func (this *DumpHandler) restoreDump(c *gin.Context) {
+func (this *DumpHandler) RestoreDump(c *gin.Context) {
 	var fileName entity.Dump
 
 	if err := c.ShouldBindJSON(&fileName); err != nil {
@@ -93,7 +93,7 @@ func (this *DumpHandler) restoreDump(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Dump restored successfully"})
 }
 
-func (this *DumpHandler) getAllDumps(c *gin.Context) {
+func (this *DumpHandler) GetAllDumps(c *gin.Context) {
 	dumps, err := this.dump.GetAllDumps(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
