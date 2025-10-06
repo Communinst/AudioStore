@@ -35,14 +35,17 @@ type UserServiceInterface interface {
 	CheckIfUserWithRoleExists(ctx context.Context, roleId uint8) (bool, error)
 }
 
-type TrackServiceInterface interface {
-	EntityServiceInterface[entity.TrackFile]
+type TrackServiceInterface interface { // define return types
+	UploadTrack(ctx context.Context, req *entity.UploadRequest) (uint64, error)
+	DownloadTrack(ctx context.Context, bucket string, objectKey string) (entity.DownloadResponse, error)
+	GetTrackInfo(ctx context.Context, bucket string, objectKey string) (entity.TrackFile, error)
 }
 
 type Service struct {
-	Auth AuthServiceInterface
-	Dump DumpServiceInterface
-	User UserServiceInterface
+	Auth  AuthServiceInterface
+	Dump  DumpServiceInterface
+	User  UserServiceInterface
+	Track TrackServiceInterface
 }
 
 func NewService(repo *repositoryAggregated.AggregatedRepository) *Service {
