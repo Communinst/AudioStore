@@ -5,18 +5,17 @@ import (
 )
 
 type TrackFile struct {
-	ID           uint64    `json:"id" db:"id"`
-	FileName     string    `json:"file_name" db:"file_name"`
-	OriginalName string    `json:"original_name" db:"original_name"`
-	BucketName   string    `json:"bucket_name" db:"bucket_name"`
-	ObjectName   string    `json:"object_name" db:"object_name"`
-	Size         int64     `json:"size" db:"size"`
-	ContentType  string    `json:"content_type" db:"content_type"`
-	ETag         string    `json:"etag" db:"etag"`
-	UploadedAt   time.Time `json:"uploaded_at" db:"uploaded_at"`
-	UserID       uint64    `json:"user_id" db:"user_id"`
-	Duration     float64   `json:"duration" db:"duration"`
-	Bitrate      int       `json:"bitrate" db:"bitrate"`
+	ID          uint64    `json:"id" db:"id"`
+	Bucket      string    `json:"bucket" db:"bucket"`
+	ObjectKey   string    `json:"object_key" db:"object_key"`
+	FileName    string    `json:"file_name" db:"file_name"`
+	ContentType string    `json:"content_type" db:"content_type"`
+	Size        int64     `json:"size" db:"size"`
+	UploadedAt  time.Time `json:"uploaded_at" db:"uploaded_at"`
+	UploaderId  uint64    `json:"uploader_id" db:"uploader_id"`
+	Duration    float64   `json:"duration" db:"duration"`
+	Bitrate     int       `json:"bitrate" db:"bitrate"`
+	TrackName   string    `json:"track_name" db:"track_name"`
 }
 
 type UploadRequest struct {

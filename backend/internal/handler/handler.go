@@ -26,6 +26,7 @@ type UserHandlerInterface interface {
 type TrackHandlerInterface interface {
 	UploadTrack(c *gin.Context)
 	DownloadTrack(c *gin.Context)
+	GetTrackInfo(c *gin.Context)
 }
 
 type Handler struct {
