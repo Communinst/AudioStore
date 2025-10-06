@@ -17,7 +17,7 @@ type UserHandlerInterface interface {
 	RemoveUserById(c *gin.Engine)
 }
 
-type TrackHandlerInteface interface {
+type TrackHandlerInterface interface {
 	UploadTrack(c *gin.Context)
 	DownloadTrack(c *gin.Context)
 }
@@ -25,11 +25,11 @@ type TrackHandlerInteface interface {
 type Handler struct {
 	auth  AuthorizationHandlerInterface
 	user  UserHandlerInterface
-	track TrackHandlerInteface
+	track TrackHandlerInterface
 }
 
 func NewHandler(srvc *service.Service) *Handler {
 	return &Handler{
-		auth: NewAuthHandler(srvc.AuthServiceInteface),
+		auth: NewAuthHandler(srvc.Auth),
 	}
 }

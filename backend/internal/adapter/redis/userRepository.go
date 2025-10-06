@@ -46,7 +46,7 @@ func (u *UserRedisRepository) Exists(ctx context.Context, key string) (bool, err
 ////
 
 // //
-func (u *UserRedisRepository) PostOne(ctx context.Context, key string, data *entity.User, expiration time.Duration) error {
+func (u *UserRedisRepository) PostOne(ctx context.Context, key string, data *entity.UserCache, expiration time.Duration) error {
 	fullKey := u.BuildKey(key)
 
 	jsonData, err := json.Marshal(data)
@@ -67,7 +67,7 @@ func (u *UserRedisRepository) PostOne(ctx context.Context, key string, data *ent
 	return nil
 }
 
-func (u *UserRedisRepository) PostOneById(ctx context.Context, data *entity.User, expiration time.Duration) error {
+func (u *UserRedisRepository) PostOneById(ctx context.Context, data *entity.UserCache, expiration time.Duration) error {
 	slog.Info("user redis repository: post one by id: initiated.")
 	return u.PostOne(ctx, fmt.Sprintf("id:%d", data.Id), data, expiration)
 }
@@ -75,7 +75,7 @@ func (u *UserRedisRepository) PostOneById(ctx context.Context, data *entity.User
 ////
 
 // //
-func (u *UserRedisRepository) GetOne(ctx context.Context, key string) (*entity.User, error) {
+func (u *UserRedisRepository) GetOne(ctx context.Context, key string) (*entity.UserCache, error) {
 	fullKey := u.BuildKey(key)
 
 	data, err := u.dbRedis.Get(ctx, fullKey).Bytes()
@@ -89,7 +89,7 @@ func (u *UserRedisRepository) GetOne(ctx context.Context, key string) (*entity.U
 			fmt.Sprintf("user redis repository: get one: failed to get data for key %s", fullKey))
 	}
 
-	var user entity.User
+	var user entity.UserCache
 	err = json.Unmarshal(data, &user)
 	if err != nil {
 		slog.Error("user redis repository: get one: failed to unmarshal data", slog.String("key", fullKey), slog.String("error", err.Error()))
@@ -101,7 +101,7 @@ func (u *UserRedisRepository) GetOne(ctx context.Context, key string) (*entity.U
 	return &user, nil
 }
 
-func (u *UserRedisRepository) GetOneById(ctx context.Context, id uint64) (*entity.User, error) {
+func (u *UserRedisRepository) GetOneById(ctx context.Context, id uint64) (*entity.UserCache, error) {
 	slog.Info("user redis repository: get one by id: initiated.")
 	return u.GetOne(ctx, fmt.Sprintf("id:%d", id))
 }
@@ -128,7 +128,7 @@ func (u *UserRedisRepository) DeleteOne(ctx context.Context, key string) error {
 	return nil
 }
 
-func (u *UserRedisRepository) DeleteByID(ctx context.Context, id uint64) error {
+func (u *UserRedisRepository) DeleteOneById(ctx context.Context, id uint64) error {
 	slog.Info("user redis repository: delete one by id: initiated.")
 	return u.DeleteOne(ctx, fmt.Sprintf("%d", id))
 }

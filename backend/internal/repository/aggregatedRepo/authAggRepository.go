@@ -12,7 +12,7 @@ type AuthAggregatedRepository struct {
 	cache repository.AuthRedisRepositoryInterface
 }
 
-func NewAggregatedRepository(pstgrs repository.AuthPostgresRepositoryInterface,
+func NewAuthAggregatedRepository(pstgrs repository.AuthPostgresRepositoryInterface,
 	rds repository.AuthRedisRepositoryInterface) *AuthAggregatedRepository {
 	return &AuthAggregatedRepository{
 		db:    pstgrs,

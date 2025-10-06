@@ -18,6 +18,11 @@ type AuthPostgresRepositoryInterface interface {
 	GetOneByEmail(ctx context.Context, email string) (*entity.User, error)
 }
 
+type DumpPostgresRepositoryInterface interface {
+	InsertDump(ctx context.Context, dump *entity.Dump) error
+	GetAllDumps(ctx context.Context) ([]entity.Dump, error)
+}
+
 type EntityPostgresRepository[E Entity] interface {
 	PostOne(ctx context.Context, data *E) (int64, error)
 	GetOneById(ctx context.Context, id uint64) (*E, error)
@@ -31,14 +36,16 @@ type UserPostgresRepositoryInterface interface {
 }
 
 type PostgresRepository struct {
-	auth AuthPostgresRepositoryInterface
-	user UserPostgresRepositoryInterface
+	Auth AuthPostgresRepositoryInterface
+	User UserPostgresRepositoryInterface
+	Dump DumpPostgresRepositoryInterface
 }
 
 func NewPostgresRepository(dbWrapper *postgresAdapter.PostgresClient) *PostgresRepository {
 	postgresRepository := &PostgresRepository{
-		auth: postgresAdapter.NewAuthPostgresRepository(dbWrapper),
-		user: postgresAdapter.NewUserPostgresRepository(dbWrapper),
+		Auth: postgresAdapter.NewAuthPostgresRepository(dbWrapper),
+		User: postgresAdapter.NewUserPostgresRepository(dbWrapper),
+		Dump: postgresAdapter.NewDumpPostgresRepository(dbWrapper),
 	}
 
 	if err := postgresRepository.InitFirstAdmin(); err != nil {
@@ -75,7 +82,7 @@ func (this *PostgresRepository) InitFirstAdmin() error {
 	AdminCreds.Password = string(hashedPassword)
 
 	// Verify admin absence
-	exists, err := this.user.CheckIfUserWithRoleExists(ctx, AdminCreds.RoleId)
+	exists, err := this.User.CheckIfUserWithRoleExists(ctx, AdminCreds.RoleId)
 	if err != nil {
 		return err
 	}
@@ -83,7 +90,7 @@ func (this *PostgresRepository) InitFirstAdmin() error {
 		return nil
 	}
 	// Build user and call tx
-	_, err = this.auth.PostOne(ctx, &entity.User{
+	_, err = this.Auth.PostOne(ctx, &entity.User{
 		Login:      AdminCreds.Login,
 		Email:      AdminCreds.Email,
 		Password:   AdminCreds.Password,
