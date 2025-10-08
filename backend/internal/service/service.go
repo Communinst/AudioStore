@@ -53,6 +53,6 @@ func NewService(repo *repositoryAggregated.AggregatedRepository) *Service {
 		Auth:  NewAuthService(repo.Auth),
 		Dump:  NewDumpService(repo.Dump),
 		User:  NewUserService(repo.User),
-		Track: NewTrackService(),
+		Track: NewTrackService(repo.Track),
 	}
 }

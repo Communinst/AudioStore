@@ -1,6 +1,7 @@
 package handler
 
 import (
+	_ "AudioShare/backend/internal/entity"
 	"AudioShare/backend/internal/service"
 	"net/http"
 	"strconv"

@@ -16,6 +16,18 @@ func NewTrackHandler(srv service.TrackServiceInterface) *TrackHandler {
 	return &TrackHandler{srvc: srv}
 }
 
+// @Summary Upload track
+// @Description Upload an audio track file
+// @Tags tracks
+// @Accept multipart/form-data
+// @Produce json
+// @Security ApiKeyAuth
+// @Param file formData file true "Audio file to upload"
+// @Success 200 {object} entity.TrackFile "Track uploaded successfully"
+// @Failure 400 {object} map[string]string "Invalid input or file not provided"
+// @Failure 401 {object} map[string]string "User not authorized"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /tracks/upload [post]
 func (this *TrackHandler) UploadTrack(c *gin.Context) {
 	userIDVal, exists := c.Get("userID")
 	if !exists {
@@ -64,6 +76,19 @@ func (this *TrackHandler) UploadTrack(c *gin.Context) {
 	c.JSON(http.StatusOK, track)
 }
 
+// @Summary Download track
+// @Description Download an audio track file
+// @Tags tracks
+// @Accept json
+// @Produce octet-stream
+// @Param bucket query string true "Bucket name"
+// @Param objectKey query string true "Object key"
+// @Success 200 {file} binary "Track file"
+// @Header 200 {string} Content-Disposition "attachment; filename=track.mp3"
+// @Header 200 {string} Content-Type "audio/mpeg"
+// @Failure 400 {object} map[string]string "Missing bucket or objectKey"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /tracks/download [get]
 func (this *TrackHandler) DownloadTrack(c *gin.Context) {
 	bucket := c.Query("bucket")
 	objectKey := c.Query("objectKey")
@@ -72,7 +97,7 @@ func (this *TrackHandler) DownloadTrack(c *gin.Context) {
 		return
 	}
 
-	resp, err := this.srvc.DownloadTrack(c.Request.Context(), bucket, objectKey) //define return type in service.go
+	resp, err := this.srvc.DownloadTrack(c.Request.Context(), bucket, objectKey)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -82,6 +107,17 @@ func (this *TrackHandler) DownloadTrack(c *gin.Context) {
 	c.Data(http.StatusOK, resp.ContentType, resp.FileData)
 }
 
+// @Summary Get track info
+// @Description Get metadata information about a track
+// @Tags tracks
+// @Accept json
+// @Produce json
+// @Param bucket query string true "Bucket name"
+// @Param objectKey query string true "Object key"
+// @Success 200 {object} entity.TrackFile "Track information"
+// @Failure 400 {object} map[string]string "Missing bucket or objectKey"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /tracks/info [get]
 func (this *TrackHandler) GetTrackInfo(c *gin.Context) {
 	bucket := c.Query("bucket")
 	objectKey := c.Query("objectKey")

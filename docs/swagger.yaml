@@ -1,5 +1,14 @@
 basePath: /v1
 definitions:
+  AudioShare_backend_internal_entity.Dump:
+    properties:
+      filename:
+        type: string
+      id:
+        type: integer
+      size:
+        type: integer
+    type: object
   AudioShare_backend_internal_entity.TrackFile:
     properties:
       bitrate:
@@ -129,30 +138,126 @@ paths:
       summary: User registration
       tags:
       - auth
-  /tracks/download/{id}:
-    get:
-      description: Download a track by ID
-      parameters:
-      - description: Track ID
-        in: path
-        name: id
-        required: true
-        type: string
+  /dump/create:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new PostgreSQL database dump using pg_dump
       produces:
-      - audio/*
+      - application/json
       responses:
         "200":
-          description: Audio file
-          schema:
-            type: file
-        "400":
-          description: Invalid track ID
+          description: Dump created successfully
           schema:
             additionalProperties:
               type: string
             type: object
-        "404":
-          description: Track not found
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create database dump
+      tags:
+      - dump
+  /dump/list:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all database dumps
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of dumps
+          schema:
+            items:
+              $ref: '#/definitions/AudioShare_backend_internal_entity.Dump'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all dumps
+      tags:
+      - dump
+  /dump/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restores a PostgreSQL database from a dump file using pg_restore
+      parameters:
+      - description: Dump file information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/AudioShare_backend_internal_entity.Dump'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Dump restored successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Restore database dump
+      tags:
+      - dump
+  /tracks/download:
+    get:
+      consumes:
+      - application/json
+      description: Download an audio track file
+      parameters:
+      - description: Bucket name
+        in: query
+        name: bucket
+        required: true
+        type: string
+      - description: Object key
+        in: query
+        name: objectKey
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: Track file
+          headers:
+            Content-Disposition:
+              description: attachment; filename=track.mp3
+              type: string
+            Content-Type:
+              description: audio/mpeg
+              type: string
+          schema:
+            type: file
+        "400":
+          description: Missing bucket or objectKey
           schema:
             additionalProperties:
               type: string
@@ -166,13 +271,20 @@ paths:
       summary: Download track
       tags:
       - tracks
-  /tracks/info/{id}:
+  /tracks/info:
     get:
-      description: Get track information by ID
+      consumes:
+      - application/json
+      description: Get metadata information about a track
       parameters:
-      - description: Track ID
-        in: path
-        name: id
+      - description: Bucket name
+        in: query
+        name: bucket
+        required: true
+        type: string
+      - description: Object key
+        in: query
+        name: objectKey
         required: true
         type: string
       produces:
@@ -183,13 +295,7 @@ paths:
           schema:
             $ref: '#/definitions/AudioShare_backend_internal_entity.TrackFile'
         "400":
-          description: Invalid track ID
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Track not found
+          description: Missing bucket or objectKey
           schema:
             additionalProperties:
               type: string
@@ -207,43 +313,28 @@ paths:
     post:
       consumes:
       - multipart/form-data
-      description: Upload a new audio track
+      description: Upload an audio track file
       parameters:
       - description: Audio file to upload
         in: formData
         name: file
         required: true
         type: file
-      - description: Track title
-        in: formData
-        name: title
-        required: true
-        type: string
-      - description: Track description
-        in: formData
-        name: description
-        type: string
       produces:
       - application/json
       responses:
-        "201":
+        "200":
           description: Track uploaded successfully
           schema:
             $ref: '#/definitions/AudioShare_backend_internal_entity.TrackFile'
         "400":
-          description: Invalid request
+          description: Invalid input or file not provided
           schema:
             additionalProperties:
               type: string
             type: object
         "401":
-          description: Unauthorized
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "413":
-          description: File too large
+          description: User not authorized
           schema:
             additionalProperties:
               type: string
@@ -255,7 +346,7 @@ paths:
               type: string
             type: object
       security:
-      - BearerAuth: []
+      - ApiKeyAuth: []
       summary: Upload track
       tags:
       - tracks

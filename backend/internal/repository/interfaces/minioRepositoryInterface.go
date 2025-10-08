@@ -25,7 +25,7 @@ type MinioRepositoryInterface interface {
 	PresignedPutObject(ctx context.Context, bucketName, objectName string, expirySec int) (string, error)
 }
 
-type MinioTrackRepositoryInterface interface {
+type TrackMinioRepositoryInterface interface {
 	MinioRepositoryInterface
 
 	UploadTrack(ctx context.Context, req *entity.UploadRequest) (*entity.TrackFile, error)
@@ -38,11 +38,11 @@ type MinioTrackRepositoryInterface interface {
 }
 
 type MinioRepository struct {
-	MinioTrackRepositoryInterface
+	Track TrackMinioRepositoryInterface
 }
 
 func NewMinioRepository(dbWrapper *minioAdapter.MinioClient) *MinioRepository {
 	return &MinioRepository{
-		MinioTrackRepositoryInterface: minioAdapter.NewTrackRepository(dbWrapper),
+		Track: minioAdapter.NewTrackRepository(dbWrapper),
 	}
 }

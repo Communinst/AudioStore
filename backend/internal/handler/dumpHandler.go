@@ -25,6 +25,15 @@ func NewDumpHandler(dump service.DumpServiceInterface) *DumpHandler {
 	}
 }
 
+// @Summary Create database dump
+// @Description Creates a new PostgreSQL database dump using pg_dump
+// @Tags dump
+// @Accept json
+// @Produce json
+// @Success 200 {object} map[string]string "Dump created successfully"
+// @Failure 400 {object} map[string]string "Bad request"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /dump/create [post]
 func (this *DumpHandler) CreateDump(c *gin.Context) {
 	dumpCfg := config.MustLoadDumpConfig()
 	currentTime := time.Now()
@@ -64,6 +73,16 @@ func (this *DumpHandler) CreateDump(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Dump created successfully"})
 }
 
+// @Summary Restore database dump
+// @Description Restores a PostgreSQL database from a dump file using pg_restore
+// @Tags dump
+// @Accept json
+// @Produce json
+// @Param request body entity.Dump true "Dump file information"
+// @Success 200 {object} map[string]string "Dump restored successfully"
+// @Failure 400 {object} map[string]string "Invalid input"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /dump/restore [post]
 func (this *DumpHandler) RestoreDump(c *gin.Context) {
 	var fileName entity.Dump
 
@@ -93,6 +112,14 @@ func (this *DumpHandler) RestoreDump(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Dump restored successfully"})
 }
 
+// @Summary Get all dumps
+// @Description Retrieves a list of all database dumps
+// @Tags dump
+// @Accept json
+// @Produce json
+// @Success 200 {array} entity.Dump "List of dumps"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /dump/list [get]
 func (this *DumpHandler) GetAllDumps(c *gin.Context) {
 	dumps, err := this.dump.GetAllDumps(c.Request.Context())
 	if err != nil {

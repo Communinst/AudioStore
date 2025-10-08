@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "AudioShare/backend/docs"
+	_ "AudioShare/docs"
 	"AudioShare/backend/internal/adapter"
 	minioAdapter "AudioShare/backend/internal/adapter/minio"
 	postgresAdapter "AudioShare/backend/internal/adapter/postgres"

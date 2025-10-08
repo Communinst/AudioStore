@@ -138,34 +138,22 @@ const docTemplate = `{
                 }
             }
         },
-        "/tracks/download/{id}": {
-            "get": {
-                "description": "Download a track by ID",
+        "/dump/create": {
+            "post": {
+                "description": "Creates a new PostgreSQL database dump using pg_dump",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
-                    "audio/*"
+                    "application/json"
                 ],
                 "tags": [
-                    "tracks"
+                    "dump"
                 ],
-                "summary": "Download track",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Track ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Create database dump",
                 "responses": {
                     "200": {
-                        "description": "Audio file",
-                        "schema": {
-                            "type": "file"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid track ID",
+                        "description": "Dump created successfully",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -173,8 +161,8 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "404": {
-                        "description": "Track not found",
+                    "400": {
+                        "description": "Bad request",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -194,9 +182,169 @@ const docTemplate = `{
                 }
             }
         },
-        "/tracks/info/{id}": {
+        "/dump/list": {
             "get": {
-                "description": "Get track information by ID",
+                "description": "Retrieves a list of all database dumps",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dump"
+                ],
+                "summary": "Get all dumps",
+                "responses": {
+                    "200": {
+                        "description": "List of dumps",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/AudioShare_backend_internal_entity.Dump"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dump/restore": {
+            "post": {
+                "description": "Restores a PostgreSQL database from a dump file using pg_restore",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dump"
+                ],
+                "summary": "Restore database dump",
+                "parameters": [
+                    {
+                        "description": "Dump file information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/AudioShare_backend_internal_entity.Dump"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dump restored successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tracks/download": {
+            "get": {
+                "description": "Download an audio track file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "tracks"
+                ],
+                "summary": "Download track",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "bucket",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Object key",
+                        "name": "objectKey",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Track file",
+                        "schema": {
+                            "type": "file"
+                        },
+                        "headers": {
+                            "Content-Disposition": {
+                                "type": "string",
+                                "description": "attachment; filename=track.mp3"
+                            },
+                            "Content-Type": {
+                                "type": "string",
+                                "description": "audio/mpeg"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Missing bucket or objectKey",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tracks/info": {
+            "get": {
+                "description": "Get metadata information about a track",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -207,9 +355,16 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Track ID",
-                        "name": "id",
-                        "in": "path",
+                        "description": "Bucket name",
+                        "name": "bucket",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Object key",
+                        "name": "objectKey",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -221,16 +376,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid track ID",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Track not found",
+                        "description": "Missing bucket or objectKey",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -254,10 +400,10 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
-                "description": "Upload a new audio track",
+                "description": "Upload an audio track file",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -275,30 +421,17 @@ const docTemplate = `{
                         "name": "file",
                         "in": "formData",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Track title",
-                        "name": "title",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Track description",
-                        "name": "description",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "Track uploaded successfully",
                         "schema": {
                             "$ref": "#/definitions/AudioShare_backend_internal_entity.TrackFile"
                         }
                     },
                     "400": {
-                        "description": "Invalid request",
+                        "description": "Invalid input or file not provided",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -307,16 +440,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "413": {
-                        "description": "File too large",
+                        "description": "User not authorized",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -534,6 +658,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "AudioShare_backend_internal_entity.Dump": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "size": {
+                    "type": "integer"
+                }
+            }
+        },
         "AudioShare_backend_internal_entity.TrackFile": {
             "type": "object",
             "properties": {

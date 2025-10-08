@@ -2,15 +2,18 @@ package service
 
 import (
 	"AudioShare/backend/internal/entity"
+	repositoryAggregated "AudioShare/backend/internal/repository/aggregatedRepo"
 	"context"
 )
 
 type trackService struct {
-	// Add repository dependencies here when needed
+	repo repositoryAggregated.TrackAggregatedRepositoryInterface
 }
 
-func NewTrackService() TrackServiceInterface {
-	return &trackService{}
+func NewTrackService(repo repositoryAggregated.TrackAggregatedRepositoryInterface) TrackServiceInterface {
+	return &trackService{
+		repo: repo,
+	}
 }
 
 func (t *trackService) UploadTrack(ctx context.Context, req *entity.UploadRequest) (uint64, error) {

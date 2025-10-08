@@ -4,6 +4,9 @@ import (
 	"time"
 )
 
+// TrackFile represents an audio track file in the system
+// @Description Audio track file entity
+
 type TrackFile struct {
 	ID          uint64    `json:"id" db:"id"`
 	Bucket      string    `json:"bucket" db:"bucket"`
