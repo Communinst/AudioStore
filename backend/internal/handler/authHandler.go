@@ -30,6 +30,16 @@ func NewAuthHandler(srvc service.AuthServiceInterface) *AuthHandler {
 	}
 }
 
+// @Summary User registration
+// @Description Register a new user account
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body entity.User true "User registration data"
+// @Success 200 {object} map[string]interface{} "User created successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /auth/signup [post]
 func (this *AuthHandler) SignUp(c *gin.Context) {
 	slog.Info("auth handler: sign up: initiated")
 	var userData entity.User
@@ -73,6 +83,17 @@ func (this *AuthHandler) SignUp(c *gin.Context) {
 	slog.Info("auth handler: sign up: finished")
 }
 
+// @Summary User login
+// @Description Authenticate user and return tokens
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body object{email=string,password=string} true "User login credentials"
+// @Success 200 {object} map[string]interface{} "Login successful"
+// @Failure 400 {object} map[string]string "Invalid input"
+// @Failure 401 {object} map[string]string "Invalid credentials"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /auth/signin [post]
 func (this *AuthHandler) SignIn(c *gin.Context) {
 	slog.Info("auth handler: sign in: initiated")
 	var creds struct {

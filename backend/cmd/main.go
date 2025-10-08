@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "AudioShare/backend/docs"
 	"AudioShare/backend/internal/adapter"
 	minioAdapter "AudioShare/backend/internal/adapter/minio"
 	postgresAdapter "AudioShare/backend/internal/adapter/postgres"
@@ -15,28 +16,39 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/joho/godotenv"
 )
 
-// @title Your API
-// @version 1.0
-// @description This is your backend API
-// @host localhost:8080
-// @BasePath /api/v1
+// @title           AudioShare API
+// @version         1.0
+// @description     API Для обмена аудио файлами
+// @BasePath        /v1
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 
 func main() {
 	// Booting
-	err := godotenv.Load()
+	err := godotenv.Load(".env")
 	if err != nil {
 		slog.Info("initial env file couldn't be reached.")
 		return
 	}
-	cfg := config.LoadConfig(os.Getenv("CONN_CONFIG_PATH"))
-
-	// Load migration here or right after repos inits?
-	err = godotenv.Load(os.Getenv("MIGRATION_CONFIG_PATH"))
+	err = godotenv.Load(os.Getenv("CONN_CONFIG_PATH"))
 	if err != nil {
-		slog.Info(",igration env file couldn't be reached.")
+		slog.Info("Connection config env file couldn't be reached.")
+		return
+	}
+	err = godotenv.Load(os.Getenv("DB_CONFIG_PATH"))
+	if err != nil {
+		slog.Info("Migration env file couldn't be reached.")
+		return
+	}
+	var cfg config.Config
+	err = cleanenv.ReadEnv(&cfg)
+	if err != nil {
+		slog.Info("Wrong config path.")
 		return
 	}
 
@@ -54,8 +66,8 @@ func main() {
 		cfg.Redis.DBName)) // not nil guaranteed
 	defer redisConn.Close()
 
-	minioConn := adapter.MustConnect(minioAdapter.NewMinio(cfg.Minio.Host,
-		cfg.Minio.Port,
+	minioConn := adapter.MustConnect(minioAdapter.NewMinio(//cfg.Minio.Host,
+		//cfg.Minio.Port,
 		cfg.Minio.Region,
 		cfg.Minio.Endpoint,
 		cfg.Minio.AccessKey,

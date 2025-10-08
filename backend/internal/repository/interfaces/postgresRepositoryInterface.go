@@ -67,7 +67,8 @@ func (this *PostgresRepository) InitFirstAdmin() error {
 		RoleId     uint8 `env:"ADMIN_DEFAULT_ROLE" env-required:"true"`
 	}
 	// Loaded via respecting .env
-	err := cleanenv.ReadConfig("MIGRATION_CONFIG_PATH", &AdminCreds)
+	err := cleanenv.ReadEnv(&AdminCreds)
+	//fmt.Printf("%v\n", AdminCreds)
 	if err != nil {
 		slog.Error("Failed to initialise fisrt admin.")
 		return fmt.Errorf("Failed to initialise first admin.")

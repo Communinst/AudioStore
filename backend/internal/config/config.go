@@ -48,7 +48,7 @@ type Config struct {
 		Endpoint   string `env:"MINIO_ENDPOINT" env-default:"http://localhost:9000"`
 		AccessKey  string `env:"MINIO_ACCESS" env-required:"true"`
 		SecretKey  string `env:"MINIO_SECRET" env-required:"true"`
-		BucketName string `env:"MINIO_BUCKETNAME" env-required:"true"`
+		BucketName string `env:"MINIO_BUCKET_NAME" env-required:"true"`
 		SSLMode    bool   `env:"MINIO_SSL" env-default:"0"`
 	}
 }
@@ -57,9 +57,9 @@ type Config struct {
 // 	fmt.Printf("%+v\n", *cfg)
 // }
 
-func LoadConfig(cfg_name string) *Config {
+func LoadConfig() *Config {
 	var cfg Config
-	err := cleanenv.ReadConfig(cfg_name, &cfg)
+	err := cleanenv.ReadEnv(&cfg)
 	if err != nil {
 		slog.Info("Wrong config path.")
 		return nil

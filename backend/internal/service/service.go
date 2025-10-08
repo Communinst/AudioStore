@@ -50,8 +50,9 @@ type Service struct {
 
 func NewService(repo *repositoryAggregated.AggregatedRepository) *Service {
 	return &Service{
-		Auth: NewAuthService(repo.Auth),
-		Dump: NewDumpService(repo.Dump),
-		User: NewUserService(repo.User),
+		Auth:  NewAuthService(repo.Auth),
+		Dump:  NewDumpService(repo.Dump),
+		User:  NewUserService(repo.User),
+		Track: NewTrackService(),
 	}
 }

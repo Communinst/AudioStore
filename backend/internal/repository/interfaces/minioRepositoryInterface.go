@@ -43,6 +43,6 @@ type MinioRepository struct {
 
 func NewMinioRepository(dbWrapper *minioAdapter.MinioClient) *MinioRepository {
 	return &MinioRepository{
-		//MinioTrackRepositoryInterface: nil,
+		MinioTrackRepositoryInterface: minioAdapter.NewTrackRepository(dbWrapper),
 	}
 }

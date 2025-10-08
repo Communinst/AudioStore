@@ -13,8 +13,9 @@ type MinioClient struct {
 	db *minio.Client
 }
 
-func NewMinio(host,
-	port,
+func NewMinio(
+	//host,
+	//port,
 	region,
 	endpoint,
 	access,
@@ -34,9 +35,15 @@ func NewMinio(host,
 		return nil, fmt.Errorf("minio: connection establishment failed: %w", err)
 	}
 
-	err = conn.MakeBucket(ctx, bucket, minio.MakeBucketOptions{Region: region})
+	exists, err := conn.BucketExists(ctx, bucket)
 	if err != nil {
-		return nil, fmt.Errorf("minio: bucket creation failed: %w", err)
+		return nil, fmt.Errorf("minio: failed to check if bucket exists.")
+	}
+	if !exists {
+		err = conn.MakeBucket(ctx, bucket, minio.MakeBucketOptions{Region: region})
+		if err != nil {
+			return nil, fmt.Errorf("minio: bucket creation failed: %w", err)
+		}
 	}
 
 	return &MinioClient{db: conn}, nil
