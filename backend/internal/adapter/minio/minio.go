@@ -41,3 +41,7 @@ func NewMinio(host,
 
 	return &MinioClient{db: conn}, nil
 }
+
+func (m *MinioClient) Close() error {
+	return nil
+}
