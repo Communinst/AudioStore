@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "AudioShare/docs"
+	//_ "AudioShare/docs"
 	"AudioShare/backend/internal/adapter"
 	minioAdapter "AudioShare/backend/internal/adapter/minio"
 	postgresAdapter "AudioShare/backend/internal/adapter/postgres"
@@ -66,7 +66,7 @@ func main() {
 		cfg.Redis.DBName)) // not nil guaranteed
 	defer redisConn.Close()
 
-	minioConn := adapter.MustConnect(minioAdapter.NewMinio(//cfg.Minio.Host,
+	minioConn := adapter.MustConnect(minioAdapter.NewMinio( //cfg.Minio.Host,
 		//cfg.Minio.Port,
 		cfg.Minio.Region,
 		cfg.Minio.Endpoint,
