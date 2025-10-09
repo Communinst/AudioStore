@@ -13,6 +13,7 @@ import (
 	"AudioShare/backend/internal/router"
 	"AudioShare/backend/internal/server"
 	"AudioShare/backend/internal/service"
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -45,12 +46,15 @@ func main() {
 		slog.Info("Migration env file couldn't be reached.")
 		return
 	}
+
 	var cfg config.Config
 	err = cleanenv.ReadEnv(&cfg)
 	if err != nil {
 		slog.Info("Wrong config path.")
 		return
 	}
+	fmt.Printf("%v", cfg)
+
 
 	postgreSQLConn := adapter.MustConnect(postgresAdapter.NewPostgres(cfg.Postgres.Host,
 		cfg.Postgres.Port,
